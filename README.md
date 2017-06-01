@@ -116,9 +116,6 @@ Except of `entering commands`, you can also use the `keyboard` to achieve this!
 
     * Input: `any command that not allowed`
         * Reply: 隨機回答問候語
-## Problems
-
-* 由於是finite states machine為架構去寫的，發現有可能會被使用者卡在某個state之中，意思是，在兩個或以上的使用者同時使用時，可能會發生錯誤，這點會是需要再去修改的部分。
 
 ## Author
 [Kuan-wen](https://github.com/winone520)
