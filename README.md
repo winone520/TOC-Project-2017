@@ -122,3 +122,4 @@ Except of `entering commands`, you can also use the `keyboard` to achieve this!
 
 ## Author
 [Kuan-wen](https://github.com/winone520)
+[Lee-W](https://github.com/Lee-w)
