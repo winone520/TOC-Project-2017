@@ -7,35 +7,150 @@ from flask import Flask, request, send_file
 from fsm import TocMachine
 
 
-API_TOKEN = 'Your Telegram API Token'
-WEBHOOK_URL = 'Your Webhook URL'
+API_TOKEN = 'Your_API_Token'
+WEBHOOK_URL = 'Your_Webhook_Url/hook'
 
 app = Flask(__name__)
 bot = telegram.Bot(token=API_TOKEN)
 machine = TocMachine(
     states=[
         'user',
-        'state1',
-        'state2'
+        'help',
+        'map',
+        'calendar',
+        'download',
+        'downloadDetail',
+        'phone',
+        'links',
+        'weather',
+        'weatherWhere',
+        'faultCommand',
+        'chat',
+        'typingRoom',
+        'startState',
+        'question',
+        'eat'
     ],
     transitions=[
         {
             'trigger': 'advance',
             'source': 'user',
-            'dest': 'state1',
-            'conditions': 'is_going_to_state1'
+            'dest': 'help',
+            'conditions': 'someone_need_help'
         },
         {
             'trigger': 'advance',
             'source': 'user',
-            'dest': 'state2',
-            'conditions': 'is_going_to_state2'
+            'dest': 'map',
+            'conditions': 'NCKU_map'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'user',
+            'dest': 'download',
+            'conditions': 'NCKU_download'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'download',
+            'dest': 'downloadDetail',
+            'conditions': 'NCKU_download_detail'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'user',
+            'dest': 'map',
+            'conditions': 'NCKU_map'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'user',
+            'dest': 'calendar',
+            'conditions': 'NCKU_calendar'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'user',
+            'dest': 'phone',
+            'conditions': 'NCKU_phone'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'user',
+            'dest': 'links',
+            'conditions': 'NCKU_link'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'user',
+            'dest': 'weather',
+            'conditions': 'ask_weather'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'weather',
+            'dest': 'weatherWhere',
+            'conditions': 'ask_weather_where'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'user',
+            'dest': 'chat',
+            'conditions': 'go_chatroom'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'chat',
+            'dest': 'typingRoom',
+            'conditions': 'is_typing'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'user',
+            'dest': 'startState',
+            'conditions': 'is_starting'
+        },
+        {
+            'trigger': 'still_chating',
+            'source': 'typingRoom',
+            'dest': 'chat'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'user',
+            'dest': 'question',
+            'conditions': 'ask_question'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'user',
+            'dest': 'eat',
+            'conditions': 'ask_food'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'user',
+            'dest': 'faultCommand',
+            'conditions': 'use_fault_command'
         },
         {
             'trigger': 'go_back',
             'source': [
-                'state1',
-                'state2'
+                'help',
+                'map',
+                'calendar',
+                'download',
+                'downloadDetail',
+                'phone',
+                'links',
+                'weather',
+                'weatherWhere',
+                'chat',
+                'startState',
+                'question',
+                'eat',
+                'faultCommand'
+
             ],
             'dest': 'user'
         }
@@ -57,9 +172,12 @@ def _set_webhook():
 
 @app.route('/hook', methods=['POST'])
 def webhook_handler():
-    update = telegram.Update.de_json(request.get_json(force=True), bot)
-    machine.advance(update)
+    if request.method == "POST":
+        update = telegram.Update.de_json(request.get_json(force=True), bot)
+        machine.advance(update)
+        
     return 'ok'
+
 
 
 @app.route('/show-fsm', methods=['GET'])
