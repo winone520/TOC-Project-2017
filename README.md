@@ -57,8 +57,8 @@ python3 app.py
 ## Usage
 The initial state is set to `user`.
 Except of `entering commands`, you can also use the `keyboard` to achieve this!
-![screenshot1](./img/screenshot1.jpg =291x283)
-![screenshot2](./img/screenshot2.jpg =290x347)
+<img src="./img/screenshot1.jpg" width="291" height="283">
+<img src="./img/screenshot2.jpg" width="290" height="347">
 
 
 
@@ -67,7 +67,7 @@ Except of `entering commands`, you can also use the `keyboard` to achieve this!
         * Reply: bot本身以及commands的介紹
         
 	* Input: `/map`
-		* Reply: ![map](./img/map.jpg =160x225)
+		* Reply: <img src="./img/map.jpg" width="160" heigh="225">
 
 	* Input: `/calendar`
 		* Reply: 成大行事曆的下載連結
