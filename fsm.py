@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from random import randint
 import telegram
 
-API_TOKEN = 'Your_API_Token'
+API_TOKEN = '356148980:AAHfSyBim0d8mgT3HhbTHc5Z3v_1cJQ3IoM'
 bot = telegram.Bot(token=API_TOKEN)
 
 taiwan=['臺北市','新北市','桃園市','臺中市','臺南市','高雄市','基隆市','新竹縣','新竹市','苗栗縣','彰化縣','南投縣','雲林縣','嘉義縣','嘉義市','屏東縣','宜蘭縣','花蓮縣','臺東縣','澎湖縣','金門縣','連江縣']
@@ -23,6 +23,7 @@ class TocMachine(GraphMachine):
     def on_enter_user(self, update):
         custom_keyboard = [['/map', '/calendar','/weather','/phone','/question'], ['/food','/links', '/download','/chat','/help']]
         reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard)
+        #reply_markup = telegram.InlineKeyboardMarkup([[telegram.InlineKeyboardButton("On", callback_data="/help"), telegram.InlineKeyboardButton("Off", callback_data="k_light_off")]])
         bot.send_message(chat_id=update.message.chat.id, text="歡迎繼續使用成大一把通喔~\n輸入 /help 來看本bot是怎麼使用的吧!", reply_markup=reply_markup)
 
     def is_starting(self, update):
@@ -81,6 +82,7 @@ class TocMachine(GraphMachine):
     def on_enter_download(self, update):
         custom_keyboard = [['1','2','3','exit']]
         reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard)
+        #reply_markup = telegram.InlineKeyboardMarkup([[telegram.InlineKeyboardButton(text="On", callback_data="1"), telegram.InlineKeyboardButton(text="Off", callback_data="2")]])
         bot.send_message(chat_id=update.message.chat.id,text='輸入 `1` 下載《成功大學學生請假單》\n輸入 `2` 下載《成功大學學生公假請假單》\n輸入 `3` 下載《成功大學資訊系補棄選申請表》\n輸入 `exit` 取消動作', parse_mode=telegram.ParseMode.MARKDOWN,reply_markup=reply_markup)
         return 1
     
@@ -99,7 +101,7 @@ class TocMachine(GraphMachine):
             self.go_back(update)
         
 
-    def on_enter_downloadDetail(self, update):
+    def on_enter_downloadDetail(self, update):       
         text = update.message.text
         
         if text == '1':
@@ -187,32 +189,33 @@ class TocMachine(GraphMachine):
 
     def go_chatroom(self, update):
         text = update.message.text
+        custom_keyboard = [['Hello~','上課中....','幫我點名'],['求你','下次請你喝飲料','exit']]
+        reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard)
         if  '/chat' in text:
-            reply = "welcome " + update.message.chat.first_name + "!\n現在就可以開始聊天了!\n輸入 /exit 來離開聊天室"
+            reply = "welcome " + update.message.chat.first_name + "!\n現在就可以開始聊天了!\n輸入 exit 來離開聊天室"
             boardcast = update.message.chat.first_name + ' 加入了聊天室!'
             update.message.reply_text(reply)
             chat_room_id.append(update.message.chat.id)
 
             for member_id in chat_room_id:
-                bot.send_message(chat_id=member_id,text=boardcast)
+                bot.send_message(chat_id=member_id,text=boardcast,reply_markup=reply_markup)
 
             return 1
         else:
             return 0
         
     def on_enter_chat(self, update):
-        reply_markup = telegram.ReplyKeyboardHide()
-        bot.send_message(chat_id=update.message.chat.id,text=reply ,reply_markup=reply_markup)
+        #reply_markup = telegram.ReplyKeyboardRemove()
         return 1
 
     def is_typing(self, update):
         text = update.message.text
-        if  '/exit' in text:
+        if  'exit' in text:
             leaveReply = update.message.chat.first_name + "離開聊天室"
             for member_id in chat_room_id:
                 bot.send_message(chat_id=member_id,text=leaveReply)
             
-            chat_room_id.remove(update.message.chat.it)
+            chat_room_id.remove(update.message.chat.id)
             self.go_back(update)
         else:
             return 1
