@@ -178,14 +178,14 @@ def webhook_handler():
     return 'ok'
 
 
-
+'''
 @app.route('/show-fsm', methods=['GET'])
 def show_fsm():
     byte_io = BytesIO()
     machine.graph.draw(byte_io, prog='dot', format='png')
     byte_io.seek(0)
     return send_file(byte_io, attachment_filename='fsm.png', mimetype='image/png')
-
+'''
 
 if __name__ == "__main__":
     _set_webhook()
