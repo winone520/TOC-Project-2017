@@ -11,6 +11,7 @@ cache = SimpleCache()
 API_TOKEN = '356148980:AAHfSyBim0d8mgT3HhbTHc5Z3v_1cJQ3IoM'
 WEBHOOK_URL = 'https://a9b6ede6.ngrok.io/hook'
 
+
 app = Flask(__name__)
 bot = telegram.Bot(token=API_TOKEN)
 machine = TocMachine(
