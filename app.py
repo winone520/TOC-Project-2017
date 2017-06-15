@@ -5,10 +5,11 @@ import telegram
 from flask import Flask, request, send_file
 
 from fsm import TocMachine
-
+from werkzeug.contrib.cache import SimpleCache
+cache = SimpleCache()
 
 API_TOKEN = '356148980:AAHfSyBim0d8mgT3HhbTHc5Z3v_1cJQ3IoM'
-WEBHOOK_URL = 'https://a68fdb7b.ngrok.io/hook'
+WEBHOOK_URL = 'https://a9b6ede6.ngrok.io/hook'
 
 app = Flask(__name__)
 bot = telegram.Bot(token=API_TOKEN)
@@ -174,7 +175,12 @@ def _set_webhook():
 def webhook_handler():
     if request.method == "POST":
         update = telegram.Update.de_json(request.get_json(force=True), bot)
-        machine.advance(update)
+        
+        state = cache.get(update.message.chat_id) or 'user'
+        machine.set_state(state)
+        advance_status = machine.advance(update)
+        cache.set(update.message.chat_id, machine.state)
+        #machine.advance(update)
     return 'ok'
 
 

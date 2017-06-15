@@ -10,7 +10,7 @@ bot = telegram.Bot(token=API_TOKEN)
 
 taiwan=['臺北市','新北市','桃園市','臺中市','臺南市','高雄市','基隆市','新竹縣','新竹市','苗栗縣','彰化縣','南投縣','雲林縣','嘉義縣','嘉義市','屏東縣','宜蘭縣','花蓮縣','臺東縣','澎湖縣','金門縣','連江縣']
 weather_url='http://opendata.cwb.gov.tw/opendataapi?dataid=F-C0032-001&authorizationkey=CWB-704B646E-753E-4DB3-A41E-3CD4149DAF04'
-rand_reply=['你以為我會跟你聊天嗎?下去!','指令是不是打錯了呢?','你再亂打信不信我打爆你?','E...T...go home','try this => /help','img/black_question.jpg']
+rand_reply=['你以為我會跟你聊天嗎?下去!','指令是不是打錯了呢?','你再亂打信不信我打爆你?','💩💩💩💩💩💩💩','try this => /help','img/black_question.jpg']
 chat_room_id=[]
 
 
@@ -20,6 +20,9 @@ class TocMachine(GraphMachine):
             model = self,
             **machine_configs
         )
+        self.states = self.machine.states
+        self.models = self.machine.models
+
     def on_enter_user(self, update):
         custom_keyboard = [['/map', '/calendar','/weather','/phone','/question'], ['/food','/links', '/download','/chat','/help']]
         reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard)
@@ -58,7 +61,9 @@ class TocMachine(GraphMachine):
             return 0
 
     def on_enter_map(self, update):
-        update.message.reply_photo(open('img/map.jpg', 'rb'))
+        replyFile = open('img/map.jpg', 'rb')
+        update.message.reply_photo(replyFile)
+        replyFile.close()
         self.go_back(update)
 
     def NCKU_calendar(self, update):
@@ -69,7 +74,9 @@ class TocMachine(GraphMachine):
             return 0
 
     def on_enter_calendar(self, update):
-        update.message.reply_document(open('img/calendar.pdf', 'rb'))
+        replyFile = open('img/calendar.pdf', 'rb')
+        update.message.reply_document(replyFile)
+        replyFile.close()
         self.go_back(update)
 
     def NCKU_download(self, update):
@@ -93,7 +100,9 @@ class TocMachine(GraphMachine):
             if  1 <= int(text) <= 3:
                 return 1
         elif text != 'exit':
-            update.message.reply_photo(open('img/black_question.jpg', 'rb')) 
+            replyFile = open('img/black_question.jpg', 'rb')
+            update.message.reply_photo(replyFile)
+            replyFile.close()
             update.message.reply_text("你這樣不乖喔 罰你重來一遍")
 
             self.go_back(update)
@@ -105,11 +114,14 @@ class TocMachine(GraphMachine):
         text = update.message.text
         
         if text == '1':
-            update.message.reply_document(open('img/成功大學學生請假單.odt', 'rb'))
+            replyFile = open('img/成功大學學生請假單.odt', 'rb')
         elif text == '2':
-            update.message.reply_document(open('img/成功大學學生公假請假單.odt', 'rb'))            
+            replyFile = open('img/成功大學學生公假請假單.odt', 'rb')         
         elif text == '3':
-            update.message.reply_document(open('img/成功大學資訊系補棄選申請表.odt', 'rb'))
+            replyFile = open('iimg/成功大學資訊系補棄選申請表.odt', 'rb')
+        
+        update.message.reply_document(replyFile)
+        replyFile.close()
         self.go_back(update)
 
     def NCKU_phone(self, update):
@@ -158,11 +170,15 @@ class TocMachine(GraphMachine):
                 update.message.reply_text("請稍等一下，我先卜個掛....")
                 return 1
             else:
-                update.message.reply_photo(open('img/black_question.jpg', 'rb')) 
+                replyFile = open('img/black_question.jpg', 'rb')
+                update.message.reply_photo(replyFile)
+                replyFile.close()
                 update.message.reply_text("你這樣不乖喔 罰你重來一遍")
                 self.go_back(update)
         elif text != 'exit': 
-            update.message.reply_photo(open('img/black_question.jpg', 'rb')) 
+            replyFile = open('img/black_question.jpg', 'rb')
+            update.message.reply_photo(replyFile)
+            replyFile.close() 
             update.message.reply_text("你這樣不乖喔 罰你重來一遍")
             self.go_back(update)
         else:
@@ -189,10 +205,10 @@ class TocMachine(GraphMachine):
 
     def go_chatroom(self, update):
         text = update.message.text
-        custom_keyboard = [['Hello~','上課中....','幫我點名'],['求你','下次請你喝飲料','exit']]
+        custom_keyboard = [['Hello~','上課中....','幫我點名'],['求你','下次請你喝飲料','exit'],['💩','😍','❤️'],['🤔','😂','🙈']]
         reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard)
         if  '/chat' in text:
-            reply = "welcome " + update.message.chat.first_name + "!\n現在就可以開始聊天了!\n輸入 exit 來離開聊天室"
+            reply = "welcome " + update.message.chat.first_name + "!\n現在就可以開始聊天了!😘\n輸入 exit 來離開聊天室"
             boardcast = update.message.chat.first_name + ' 加入了聊天室!'
             update.message.reply_text(reply)
             chat_room_id.append(update.message.chat.id)
@@ -205,7 +221,6 @@ class TocMachine(GraphMachine):
             return 0
         
     def on_enter_chat(self, update):
-        #reply_markup = telegram.ReplyKeyboardRemove()
         return 1
 
     def is_typing(self, update):
@@ -234,7 +249,7 @@ class TocMachine(GraphMachine):
             return 0
         
     def on_enter_question(self, update):
-        reply = '`Q1. 如何申請在學證明？`\nA: 至註冊組投幣自動繳費機申請紙本在學證明 (20元/份)。\n\n`Q2. 學生證遺失如何申請補發?`\nA: \n1.  採[數位學生證線上掛失辦理](http://id.ncku.edu.tw/login.php)(註冊組首頁>學生線上服務)或親自註冊組1號櫃台辦理線上掛失程序\n2.   補發者至自動投幣機繳費NT$200元。憑收據至註冊組辦理補發(1號櫃台將撕取收執聯)\n\n`Q3. 如何辦理選課退選？`\nA: 依選課公告退選期間,至註冊組首頁>學生線上服務>選課系統點選 退選功能申請\n\n`Q4. 身分證掉了，該怎麼補辦身分證?`\nA:\n*應備證件*:\n1.本人印章(或簽名)。\n2.本人戶口名簿正本或貼有相片之身分證明文件。\n3.本人最近2年內拍攝之符合規格相片1張\n*規費*：每張收費新臺幣200元\n*受理戶政事務所*：任一戶政事務所申請'
+        reply = '`Q1. 如何申請在學證明？`\nA: 至註冊組投幣自動繳費機申請紙本在學證明 (20元/份)。\n\n`Q2. 學生證遺失如何申請補發?`\nA: \n1.  採[數位學生證線上掛失辦理](http://id.ncku.edu.tw/login.php)(註冊組首頁>學生線上服務)或親自註冊組1號櫃台辦理線上掛失程序\n2.   補發者至自動投幣機繳費NT$200元。憑收據至註冊組辦理補發(1號櫃台將撕取收執聯)\n\n`Q3. 如何辦理選課退選？`\nA: 依選課公告退選期間,至註冊組首頁>學生線上服務>選課系統點選 退選功能申請\n\n`Q4. 身分證掉了，該怎麼補辦身分證?`\nA:\n*應備證件*:\n1.本人印章(或簽名)。\n2.本人戶口名簿正本或貼有相片之身分證明文件。\n3.本人最近2年內拍攝之符合規格相片1張\n*規費*：每張收費新臺幣200元\n*受理戶政事務所*：任一戶政事務所申請\n\n[查看更多...](http://www.ncku.edu.tw/~register/chinese/q&a.htm)'
         bot.send_message(chat_id=update.message.chat.id,text=reply, parse_mode=telegram.ParseMode.MARKDOWN )
         self.go_back(update)
 
@@ -247,9 +262,18 @@ class TocMachine(GraphMachine):
         
     def on_enter_eat(self, update):
         reply = '......別問我 我也想知道今天要吃什麼'
+        #reply ="https://www.google.com.tw/maps/search/%E9%A4%90%E5%BB%B3/@22.9920684,120.2223797,15z/data=!3m1!4b1?hl=zh-TW&authuser=0"
+        
+        #location_keyboard = telegram.KeyboardButton(text="send_location", request_location=True)
+        #custom_keyboard = [[ location_keyboard ]]
+        #reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard)
+        #bot.send_message(chat_id=update.message.chat.id,text="give me location",reply_markup=reply_markup)
+
+        #return 1
         update.message.reply_text(reply)
         self.go_back(update)
 
+  
 
     def use_fault_command(self, update):
         return 1
